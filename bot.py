@@ -236,15 +236,26 @@ async def set_menu_commands(application):
     ])
 
 # Botni ishga tushirish
-async def main():
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+TOKEN = os.getenv("BOT_TOKEN")
+
+async def start(update, context):
+    await update.message.reply_text("Assalomu alaykum!")
+
+async def handle_message(update, context):
+    await update.message.reply_text("Xabar oldim!")
+
+def main():
     application = Application.builder().token(TOKEN).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    await set_menu_commands(application)
-
-    await application.run_polling()
+    application.run_polling()  # E'TIBOR: AWAIT YO‘Q BU YERDA!
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
