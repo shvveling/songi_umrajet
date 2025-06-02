@@ -2,7 +2,6 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, BotCommand
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from datetime import datetime, timedelta
 import asyncio
-import os
 
 # Admin kontaktlari
 MANAGER_RAVZA = "@vip_arabiy"
@@ -48,7 +47,7 @@ Obuna bo‘ling va eng so‘nggi xabarlarni o‘tkazib yubormang!
         parse_mode="Markdown"
     )
 
-# Xabarlar uchun handler
+# Xabarlarni qabul qilish va javob berish
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
@@ -222,7 +221,9 @@ async def set_menu_commands(application):
 
 # Botni ishga tushirish
 async def main():
-    application = Application.builder().token("7667056220:AAEc8DwQ0WJrBfVk_yLN8wLWGpxUfRKT-5A").build()
+    TOKEN = "7667056220:AAEc8DwQ0WJrBfVk_yLN8wLWGpxUfRKT-5A"  # Tokeningizni shu yerga joylashtiring
+
+    application = Application.builder().token(TOKEN).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
