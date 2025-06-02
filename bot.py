@@ -21,7 +21,7 @@ BOT_START_DATE = datetime(2025, 6, 2)
 def is_discount_active():
     return datetime.now() < BOT_START_DATE + timedelta(days=7)
 
-# Start komandasi uchun
+# /start komandasi
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [KeyboardButton("🕌 Ravzaga tashrif"), KeyboardButton("📦 Umra paketlari")],
@@ -53,12 +53,12 @@ Obuna bo‘ling va eng so‘nggi xabarlarni o‘tkazib yubormang!
         parse_mode="Markdown"
     )
 
-# Xabarlarni qabul qilish va javob berish
+# Foydalanuvchi xabarlariga javob
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
+    discount_active = is_discount_active()
 
     if text == "🕌 Ravzaga tashrif":
-        discount_active = is_discount_active()
         price_viza = "10 SAR (aksiyada!)" if discount_active else "15 SAR"
         price_no_viza = "15 SAR (aksiyada!)" if discount_active else "20 SAR"
 
@@ -79,6 +79,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             """,
             parse_mode="Markdown"
         )
+
     elif text == "📦 Umra paketlari":
         await update.message.reply_text(
             f"""
@@ -99,6 +100,7 @@ Paketga quyidagilar kiradi:
             """,
             parse_mode="Markdown"
         )
+
     elif text == "🏨 Mehmonxona/Hostel":
         await update.message.reply_text(
             f"""
@@ -112,6 +114,7 @@ Paketga quyidagilar kiradi:
             """,
             parse_mode="Markdown"
         )
+
     elif text == "🚆 Poezd chiptalari":
         await update.message.reply_text(
             f"""
@@ -126,6 +129,7 @@ Paketga quyidagilar kiradi:
             """,
             parse_mode="Markdown"
         )
+
     elif text == "🚐 Transport xizmati":
         await update.message.reply_text(
             f"""
@@ -139,6 +143,7 @@ Paketga quyidagilar kiradi:
             """,
             parse_mode="Markdown"
         )
+
     elif text == "🍱 Guruhlarga ovqat":
         await update.message.reply_text(
             f"""
@@ -153,6 +158,7 @@ Paketga quyidagilar kiradi:
             """,
             parse_mode="Markdown"
         )
+
     elif text == "✈️ Avia chiptalar":
         await update.message.reply_text(
             f"""
@@ -166,6 +172,7 @@ Paketga quyidagilar kiradi:
             """,
             parse_mode="Markdown"
         )
+
     elif text == "📞 Admin bilan bog‘lanish":
         await update.message.reply_text(
             f"""
@@ -176,6 +183,7 @@ Paketga quyidagilar kiradi:
             """,
             parse_mode="Markdown"
         )
+
     elif text == "📢 Kanalimiz":
         await update.message.reply_text(
             f"""
@@ -188,6 +196,7 @@ Obuna bo‘ling va yangiliklardan xabardor bo‘ling!
             """,
             parse_mode="Markdown"
         )
+
     elif text == "🤖 Savol-javob & maslahat":
         await update.message.reply_text(
             f"""
@@ -207,10 +216,11 @@ Agar boshqa savolingiz bo‘lsa, adminlar bilan bog‘laning:
             """,
             parse_mode="Markdown"
         )
+
     else:
         await update.message.reply_text("Iltimos, menyudan biror xizmatni tanlang.")
 
-# Bot komandalar menyusini sozlash
+# Komanda menyusi
 async def set_menu_commands(application):
     await application.bot.set_my_commands([
         BotCommand("start", "🔄 Botni qayta ishga tushirish"),
