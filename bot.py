@@ -1,186 +1,193 @@
 import os
 import asyncio
-from datetime import datetime, timedelta
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, BotCommand
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 
-# .env fayldan tokenni yuklash
+# --- YUKLANISHLAR --- #
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
-    raise ValueError("BOT_TOKEN muhit o'zgaruvchisi o'rnatilmagan!")
+    raise ValueError("BOT_TOKEN topilmadi! .env faylni tekshiring.")
 
-# Admin kontaktlari
+# --- ADMIN KONTAKTLAR --- #
 MANAGER_RAVZA = "@vip_arabiy"
 MANAGER_ASSISTANT = "@V001VB"
 CHANNEL_UMRAJET = "@umrajet"
 CHANNEL_RAVZA = "@the_ravza"
+
+# --- AKSIYA MUDDATI --- #
 BOT_START_DATE = datetime(2025, 6, 2)
 
-# 7 kunlik aksiya tekshiruvi
 def is_discount_active():
     return datetime.now() < BOT_START_DATE + timedelta(days=7)
 
-# Asosiy menyu
+# --- START KOMANDASI --- #
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        [KeyboardButton("🍃 Ravzaga tashrif"), KeyboardButton("🕋 Umra paketlari")],
-        [KeyboardButton("🏨 Mehmonxonalar"), KeyboardButton("🚄 Poezd chiptalari")],
-        [KeyboardButton("🚐 Premium transport"), KeyboardButton("🍽 Guruh ovqatlari")],
-        [KeyboardButton("🛫 Avia chiptalar"), KeyboardButton("📞 Admin bilan bog‘lanish")],
-        [KeyboardButton("📢 Rasmiy kanallar"), KeyboardButton("🧠 AI yordamchi")]
+        [KeyboardButton("🍇 Ravzaga tashrif"), KeyboardButton("🕋 Umra paketlari")],
+        [KeyboardButton("🏨 Mehmonxona/Hostel"), KeyboardButton("🚄 Poezd chiptalari")],
+        [KeyboardButton("🚐 Transport xizmati"), KeyboardButton("🍽 Guruh ovqatlari")],
+        [KeyboardButton("✈️ Avia chiptalar"), KeyboardButton("📞 Admin bilan bog‘lanish")],
+        [KeyboardButton("📢 Rasmiy kanallar"), KeyboardButton("💬 Yordamchi AI")]
     ]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
     await update.message.reply_text(
-        f"""
-🌟 *UmraJet — Premium Umra xizmatlari* 🌟
+        """
+🤍 *UmraJet — Premium Umra xizmatlari markazi* 🤍
 
-Assalomu alaykum, {update.effective_user.first_name}!
-
-Biz orqali siz eng ishonchli, qulay va tezkor xizmatlardan foydalanishingiz mumkin. Quyidagi bo‘limlardan birini tanlang 👇
+Assalomu alaykum!
+Sizga qulaylik yaratish uchun quyidagi xizmatlardan birini tanlang:
         """,
         reply_markup=reply_markup,
         parse_mode="Markdown"
     )
 
-# Xabarlar uchun asosiy handler
+# --- XABARLARGA JAVOB BERISH --- #
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
-    discount = is_discount_active()
+    discount_active = is_discount_active()
 
-    if text == "🍃 Ravzaga tashrif":
-        viza_price = "10 SAR (aksiyada!)" if discount else "15 SAR"
-        no_viza_price = "15 SAR (aksiyada!)" if discount else "20 SAR"
+    if text == "🍇 Ravzaga tashrif":
+        price_viza = "10 SAR (aksiyada!)" if discount_active else "15 SAR"
+        price_no_viza = "15 SAR (aksiyada!)" if discount_active else "20 SAR"
 
         await update.message.reply_text(f"""
-🌿 *Ravzaga tashrif* — qalbingizga yaqin yo‘l ✨
+🍇 *Ravzaga tashrif xizmati* — Ruhiy yangilanish manbai
 
-🎫 *Viza bilan*: {viza_price}
-🛂 *Vizasiz*: {no_viza_price}
+🔹 *Viza bilan:* {price_viza}
+🔹 *Vizasiz:* {price_no_viza}
 
-📆 *Aksiya!* Faqat 7 kun davomida chegirmali narxlarda xizmatlardan foydalaning!
-📄 Hujjatlarni rasm yoki PDF ko‘rinishida yuboring.
-💳 To‘lov: Uzcard, Humo, Visa, Crypto
+🎁 *Chegirma:* Bot ishga tushganidan keyingi 7 kun davomida maxsus narxlar
+📌 *Xizmat turi:* Jamoaviy yoki shaxsiy tashriflar
+💳 *To‘lov:* Uzcard / Humo / Visa / Crypto
 
-📞 Bog‘lanish: {MANAGER_RAVZA} | {MANAGER_ASSISTANT}
+📄 *Hujjat yuboring:* Rasm yoki PDF ko‘rinishida
+📞 *Bog‘lanish:* {MANAGER_RAVZA} yoki {MANAGER_ASSISTANT}
         """, parse_mode="Markdown")
 
     elif text == "🕋 Umra paketlari":
         await update.message.reply_text(f"""
-🕋 *Umra paketlari — Standard va VIP* 🌍
+🕋 *Umra paketlari — Armon emas, imkon!* 🌙
 
-🔹 *Standard paket*: 1100$ dan boshlab
-🔸 *VIP paket*: 2000$ dan boshlab
+✨ *Standard:* 1100$ dan
+✨ *VIP:* 2000$ dan
 
-✅ Viza
+Paketga quyidagilar kiradi:
+✅ Vizani rasmiylashtirish
 ✅ Mehmonxona
 ✅ Transport
-✅ Ovqatlanish
-✅ Gid xizmati
+✅ Gid xizmatlari
+✅ Guruh uchun ovqat
 
-💳 To‘lov: Uzcard / Humo / Visa / Crypto
-📲 Murojaat: {MANAGER_ASSISTANT}
+💳 *To‘lov:* Uzcard / Humo / Visa / Crypto
+📞 *Bog‘lanish:* {MANAGER_ASSISTANT} yoki {MANAGER_RAVZA}
         """, parse_mode="Markdown")
 
-    elif text == "🏨 Mehmonxonalar":
+    elif text == "🏨 Mehmonxona/Hostel":
         await update.message.reply_text(f"""
-🏨 *Mehmonxona va Hostel bron qilish*
+🏨 *Mehmonxona va Hostel bron qilish* 🛏
 
-📍 Makka & Madina shaharlarida joylashgan
-🛏 3 yulduzdan 5 yulduzgacha
-🍽 Ovqatli va ovqatsiz variantlar
-📅 Istalgan muddatga bron qilish
+📍 Makka va Madina markazlarida joylashgan
+🕰 Har qanday muddatga
+🍴 Ovqatli yoki ovqatsiz
 
-📲 Bog‘lanish: {MANAGER_ASSISTANT}
+💼 Ishonchli xizmat va xavfsizlik kafolati
+📞 Aloqa: {MANAGER_ASSISTANT}
         """, parse_mode="Markdown")
 
     elif text == "🚄 Poezd chiptalari":
         await update.message.reply_text(f"""
-🚄 *HHR Poezd chiptalari* — qulay, tez va ishonchli
+🚄 *HHR Poezd chiptalari* 🚅
 
-📍 Yo‘nalish: Makka ↔ Madina
-🗓 Istalgan kunga bron
-💺 Ekanom / Biznes sinf
+📍 Yo‘nalishlar: Makka, Madina va boshqa shaharlar
+🕓 Buyurtma: Istalgan kunga
+💺 Joylar: Ekanom / Biznes
 
-📲 Buyurtma: {MANAGER_ASSISTANT}
+🛂 Faqat viza bo‘lishi kifoya
+📞 Bog‘lanish: {MANAGER_ASSISTANT}
         """, parse_mode="Markdown")
 
-    elif text == "🚐 Premium transport":
+    elif text == "🚐 Transport xizmati":
         await update.message.reply_text(f"""
-🚐 *Shaxsiy va guruh transport xizmatlari*
+🚐 *Shaxsiy va guruh transporti* 🚖
 
-🚖 VIP avtomobillar
-🚌 Avtobuslar / Minivenlar
-🏠 Aeroportdan olib kirish
+🚍 Avtobus, Toyota, VIP mashinalar
+🏘 Mehmonxonadan masjidlargacha yetkazish
 👨‍✈️ Tajribali haydovchilar
 
-📲 Buyurtma: {MANAGER_ASSISTANT}
+📞 Buyurtma uchun: {MANAGER_ASSISTANT}
         """, parse_mode="Markdown")
 
     elif text == "🍽 Guruh ovqatlari":
         await update.message.reply_text(f"""
-🍽 *10+ kishilik guruhlarga ovqat yetkazib berish*
+🍽 *10+ kishilik guruh ovqatlari* 🍛
 
-🍛 Milliy va xalqaro menyular
-🕰 1 mahal, 2 mahal, 3 mahal variantlar
-🎉 VIP ziyofatlar uchun alohida xizmat
+🥘 O‘zbekcha taomlar
+🍱 1, 2 yoki 3 mahal
+🎉 Ziyofatlar uchun maxsus menyular
 
-📲 Buyurtma: {MANAGER_ASSISTANT}
+📞 Bog‘lanish: {MANAGER_ASSISTANT}
         """, parse_mode="Markdown")
 
-    elif text == "🛫 Avia chiptalar":
+    elif text == "✈️ Avia chiptalar":
         await update.message.reply_text(f"""
-🛫 *Xalqaro avia chiptalar*
+✈️ *Avia chiptalar — Istalgan manzilga* 🌍
 
-🌍 Istalgan yo‘nalishga
-🛂 Vizali / vizasiz qatnovlar
-📆 Mos sanalarni tanlash imkoniyati
+📆 Istalgan sana, istalgan davlat
+🛂 Vizali yoki vizasiz variantlar
 
-📲 Buyurtma: {MANAGER_ASSISTANT}
+📞 Buyurtma: {MANAGER_ASSISTANT} yoki {MANAGER_RAVZA}
         """, parse_mode="Markdown")
 
     elif text == "📞 Admin bilan bog‘lanish":
         await update.message.reply_text(f"""
-📞 *Administratorlar bilan bog‘lanish:*
+📞 *Adminlar bilan to‘g‘ridan-to‘g‘ri bog‘laning:*
 
-📍 Ravza xizmatlari: {MANAGER_RAVZA}
-📍 Umra va boshqa xizmatlar: {MANAGER_ASSISTANT}
+🍇 Ravza xizmatlari: {MANAGER_RAVZA}
+🕋 Umra & boshqa xizmatlar: {MANAGER_ASSISTANT}
         """, parse_mode="Markdown")
 
     elif text == "📢 Rasmiy kanallar":
         await update.message.reply_text(f"""
-📢 *Bizning rasmiy kanallarimiz:*
+📢 *Rasmiy axborot manbalarimiz:*
 
-🔗 UmraJet yangiliklari: {CHANNEL_UMRAJET}
-🔗 Ravza tashriflari: {CHANNEL_RAVZA}
+✅ UmraJet yangiliklari: {CHANNEL_UMRAJET}
+✅ Ravza tashriflari: {CHANNEL_RAVZA}
         """, parse_mode="Markdown")
 
-    elif text == "🧠 AI yordamchi":
+    elif text == "💬 Yordamchi AI":
         await update.message.reply_text("""
-🧠 *AI Yordamchi (beta)*
-
-Savolingizni yozing, biz sun’iy intellekt asosida javob beramiz!
-(Bu demo versiyada API ishlatilmaydi)
+🧠 *AI yordamchi* faollashtirildi. Endi oddiy savollarni yozing, va javob olasiz.
+(Masalan: "Umra necha kun davom etadi?" yoki "Vizasiz Ravzaga bora olamanmi?")
         """, parse_mode="Markdown")
 
     else:
-        await update.message.reply_text("🤖 Savolingiz uchun rahmat! Biz tez orada sizga javob beramiz yoki menyudan xizmatni tanlang.")
+        # AI YORDAMCHI — sodda versiya, API talab qilmaydi
+        lower = text.lower()
+        if "ravza" in lower:
+            await update.message.reply_text("✅ Ha, vizasiz ham Ravzaga olib kiramiz.")
+        elif "umra" in lower:
+            await update.message.reply_text("🕋 Umra xizmatimiz to‘liq paketdan iborat — sizga faqat pasport yetarli.")
+        elif "to‘lov" in lower or "tolov" in lower:
+            await update.message.reply_text("💳 To‘lov: Uzcard, Humo, Visa, yoki Crypto orqali amalga oshiriladi.")
+        else:
+            await update.message.reply_text("🤖 Savolingizni tushunmadim. Iltimos, aniqroq yozing yoki menyudan xizmat tanlang.")
 
-# Komandalar menyusi
+# --- KOMANDALAR MENYUSI --- #
 async def set_menu_commands(application):
     await application.bot.set_my_commands([
-        BotCommand("start", "🔄 Botni qayta ishga tushirish")
+        BotCommand("start", "🔄 Botni qayta ishga tushirish"),
     ])
 
-# Botni ishga tushirish
+# --- ASOSIY FUNKSIYA --- #
 def main():
     application = Application.builder().token(TOKEN).build()
-
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-
+    asyncio.run(set_menu_commands(application))
     application.run_polling()
 
 if __name__ == "__main__":
