@@ -1,5 +1,4 @@
 import os
-import asyncio
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, BotCommand
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from dotenv import load_dotenv
@@ -24,23 +23,27 @@ def is_discount_active():
     return datetime.now() < BOT_START_DATE + timedelta(days=7)
 
 # /start komandasi
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def start_keyboard():
     keyboard = [
-        [KeyboardButton("🍍 Ravzaga tashrif"), KeyboardButton("📦 Umra paketlari")],
-        [KeyboardButton("🏨 Mehmonxona/Hostel"), KeyboardButton("🚆 Poezd chiptalari")],
-        [KeyboardButton("🚐 Transport xizmati"), KeyboardButton("🍱 Guruhlarga ovqat")],
-        [KeyboardButton("✈️ Avia chiptalar"), KeyboardButton("📞 Admin bilan bog‘lanish")],
-        [KeyboardButton("📢 Kanalimiz"), KeyboardButton("🤖 Savol-javob & maslahat")]
+        ["🍍 Ravzaga tashrif", "📦 Umra paketlari"],
+        ["🏨 Mehmonxona/Hostel", "🚆 Poezd chiptalari"],
+        ["🚐 Transport xizmati", "🍱 Guruhlarga ovqat"],
+        ["✈️ Avia chiptalar", "📞 Admin bilan bog‘lanish"],
+        ["📢 Kanalimiz", "🤖 Savol-javob & maslahat"]
     ]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return ReplyKeyboardMarkup(
+        [[KeyboardButton(text) for text in row] for row in keyboard],
+        resize_keyboard=True
+    )
 
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         """
 *UmraJet — Premium xizmatlar bot 🤍*
 
 Assalomu alaykum! Quyidagi xizmatlardan birini tanlang:
         """,
-        reply_markup=reply_markup,
+        reply_markup=start_keyboard(),
         parse_mode="Markdown"
     )
 
