@@ -14,7 +14,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     await update.message.reply_text(
-        "🕌 *UmraJet — Premium xizmatlar bot* 🤍
+        welcome_text = "🕌 *UmraJet — Premium xizmatlar bot* 🤍\nSizga yordam berish uchun tayyorman."
 
 "
         "Quyidagi menyudan xizmatni tanlang:", reply_markup=reply_markup, parse_mode="Markdown"
