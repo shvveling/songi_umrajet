@@ -1,7 +1,15 @@
+import os
+
+TOKEN = os.getenv("BOT_TOKEN")
+if not TOKEN:
+    raise ValueError("ERROR: BOT_TOKEN environment variable is not set!")
+
+# keyin telegram importlar va qolgan kod
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, BotCommand
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from datetime import datetime, timedelta
-import asyncio
+
+# ... qolgan kod
 
 # Admin kontaktlari
 MANAGER_RAVZA = "@vip_arabiy"
@@ -221,7 +229,9 @@ async def set_menu_commands(application):
 
 # Botni ishga tushirish
 async def main():
-    TOKEN = "7667056220:AAEc8DwQ0WJrBfVk_yLN8wLWGpxUfRKT-5A"  # Tokeningizni shu yerga joylashtiring
+    TOKEN = "import os
+
+TOKEN = os.getenv "BOT_TOKEN"  # Tokeningizni shu yerga joylashtiring
 
     application = Application.builder().token(TOKEN).build()
 
