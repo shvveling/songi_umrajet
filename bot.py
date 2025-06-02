@@ -229,9 +229,12 @@ async def set_menu_commands(application):
 
 # Botni ishga tushirish
 async def main():
-    TOKEN = "import os
+    import os
 
-TOKEN = os.getenv "BOT_TOKEN"  # Tokeningizni shu yerga joylashtiring
+TOKEN = os.getenv("BOT_TOKEN")
+
+if not TOKEN:
+    raise ValueError("ERROR: BOT_TOKEN environment variable is not set!")
 
     application = Application.builder().token(TOKEN).build()
 
