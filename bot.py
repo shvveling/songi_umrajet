@@ -2,11 +2,9 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import os
 
-# Manager usernames
 MANAGER_RAVZA = "@vip_arabiy"
 MANAGER_ASSISTANT = "@V001VB"
 
-# Start command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [KeyboardButton("🕌 Ravzaga tashrif"), KeyboardButton("📦 Umra paketlari")],
@@ -15,155 +13,108 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [KeyboardButton("✈️ Avia chiptalar"), KeyboardButton("📞 Admin bilan bog‘lanish")]
     ]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-
     await update.message.reply_text(
-        """
-🕌 *UmraJet — Premium xizmatlar bot* 🤍
-
-Assalomu alaykum! Sizga Umra va Haj safarlarida eng yuqori darajadagi xizmatlarni taqdim etamiz.
-Quyidagi menyudan kerakli xizmatni tanlang:
-        """,
+        "\U0001F54C *UmraJet — Premium xizmatlar botiga xush kelibsiz!* 🤍\n\n"
+        "Biz orqali siz Umra va Ravza tashrifi, transport, mehmonxona, chipta va boshqa ko‘plab xizmatlardan foydalanishingiz mumkin.\n\n"
+        "Quyidagi menyudan kerakli xizmatni tanlang:",
         reply_markup=reply_markup,
         parse_mode="Markdown"
     )
 
-# Message handler
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
     if text == "🕌 Ravzaga tashrif":
         await update.message.reply_text(
-            f"""
-🕌 *Ravzaga tashrif xizmati*
-
-🔸 *Viza bilan*: 15 SAR
-🔹 *Vizasiz*: 20 SAR
-
-📉 *Guruh uchun yoki ko‘p miqdorda buyurtmalarda chegirmalar mavjud!*
-
-📝 Rasm yoki PDF formatda hujjatingizni yuboring. 
-💳 To‘lov: Uzcard / Humo / Visa / Crypto
-📲 Bog‘lanish: {MANAGER_RAVZA}
-            """,
+            "🕌 *Ravzaga tashrif xizmati*\n\n"
+            "🔹 Viza bilan: *15 SAR*\n"
+            "🔹 Vizasiz: *20 SAR*\n"
+            "📉 Guruhli buyurtmalarda chegirmalar mavjud!\n\n"
+            "💳 To‘lov: Uzcard / Humo / Visa / Crypto\n"
+            "📎 Hujjatni rasm yoki PDF ko‘rinishida yuboring.\n"
+            f"📲 Bog‘lanish: {MANAGER_RAVZA}",
             parse_mode="Markdown"
         )
 
     elif text == "📦 Umra paketlari":
         await update.message.reply_text(
-            f"""
-📦 *Umra Paketlari* — barcha xizmatlar bitta joyda!
-
-🔹 *Standard*: 1100$ dan
-🔸 *VIP*: 2000$ dan
-
-✅ Paketga quyidagilar kiradi:
-- Mehmonxona (Makka va Madina)
-- Transferlar (Aeroport, Ziyorat joylari)
-- Umra uchun qo‘llab-quvvatlash
-- Viza va hujjatlar
-- 24/7 yordam xizmati
-
-💳 To‘lov: Uzcard / Humo / Visa / Crypto
-📲 Yordamchi: {MANAGER_ASSISTANT}
-            """,
+            "📦 *Umra paketlari*\n\n"
+            "🔸 *Standard paket* — 1100$ dan boshlanadi (avia, mehmonxona, transfer, viza, taomlar)\n"
+            "🔸 *VIP paket* — 2000$ dan (premium xizmatlar bilan)\n\n"
+            "✅ Har bir paketga to‘liq xizmatlar kiritilgan.\n"
+            "🕋 Makka va Madina uchun alohida tanlovlar mavjud.\n\n"
+            "📌 Tafsilotlar va buyurtma uchun bog‘laning:"
+            f"\n📲 {MANAGER_ASSISTANT}",
             parse_mode="Markdown"
         )
 
     elif text == "🏨 Mehmonxona/Hostel":
         await update.message.reply_text(
-            f"""
-🏨 *Mehmonxona/Hostel bron qilish xizmati*
-
-📍 Makka, Madina va boshqa shaharlarda mavjud
-🛏️ 1 kishilikdan 5 kishilikgacha xonalar
-🍽 3 mahal ovqat bilan yoki ovqatsiz variantlar
-
-💬 Narxlar: Muddat, joylashuv va xizmatga qarab o‘zgaradi.
-📲 Tafsilotlar uchun bog‘laning: {MANAGER_ASSISTANT}
-            """,
+            "🏨 *Mehmonxona va hostel xizmatlari*\n\n"
+            "📍 Makka, Madina va boshqa shaharlarda mavjud.\n"
+            "⏳ Uzoq va qisqa muddatli turar joylar.\n"
+            "🥣 3 mahal nonushta xizmati qo‘shilishi mumkin.\n"
+            "💰 Narxlar ehtiyoj va joylashuvga qarab farqlanadi.\n\n"
+            f"📲 Bog‘lanish: {MANAGER_ASSISTANT}",
             parse_mode="Markdown"
         )
 
     elif text == "🚆 Poezd chiptalari":
         await update.message.reply_text(
-            f"""
-🚆 *Poezd chiptalari (HHR Train)*
-
-📍 Yo‘nalishlar: Makka ↔ Madina ↔ Jidda ↔ King Abdullah Economic City
-💺 Klasslar: Ekonom va Biznes
-📆 Buyurtma: Istalgan sana uchun bron qilish mumkin
-
-🛂 Saudiya vizasi kifoya
-📲 Buyurtma uchun bog‘laning: {MANAGER_ASSISTANT}
-            """,
+            "🚆 *HHR (Haramain) Poezd chiptalari*\n\n"
+            "📍 Yo‘nalishlar: Makka — Madina — Jidda — KAEC\n"
+            "💼 Ekanom va biznes klass mavjud.\n"
+            "🗓 Istalgan sana uchun zakaz qilish mumkin.\n"
+            "📎 Faqat Saudiya vizasi talab etiladi.\n\n"
+            f"📲 Bog‘lanish: {MANAGER_ASSISTANT}",
             parse_mode="Markdown"
         )
 
     elif text == "🚐 Transport xizmati":
         await update.message.reply_text(
-            f"""
-🚐 *Transport xizmati*
-
-🚗 Mashinalar: Toyota, GMC, Buslar, VIP transportlar
-📍 Xizmatlar: Shahardan shahar, aeroportdan mehmonxonagacha, Makkaga olib kirish
-👨‍✈️ Haydovchi bilan birga
-
-📲 Buyurtma uchun bog‘laning: {MANAGER_ASSISTANT}
-            """,
+            "🚐 *Transport xizmatlari*\n\n"
+            "🚖 Avtobuslar, GMC, Toyota va VIP mashinalar mavjud.\n"
+            "🕋 Makkaga olib kirish xizmati mavjud.\n"
+            "👨‍✈️ Haydovchilar xizmat bilan birga taqdim etiladi.\n\n"
+            f"📲 Tafsilotlar uchun: {MANAGER_ASSISTANT}",
             parse_mode="Markdown"
         )
 
     elif text == "🍱 Guruhlarga ovqat":
         await update.message.reply_text(
-            f"""
-🍱 *Guruhlarga ovqat yetkazib berish xizmati*
-
-👥 10–15 kishilik guruhlar uchun
-🍽 O‘zbek taomlari va maxsus VIP menyular
-📦 Yetkazib beriladi
-💰 Narxlar taom soni va menyuga qarab belgilanadi
-
-📲 Buyurtma va menyu uchun bog‘laning: {MANAGER_ASSISTANT}
-            """,
+            "🍱 *Guruhlar uchun ovqat yetkazish*\n\n"
+            "👥 Kamida 10–15 kishilik buyurtmalar qabul qilinadi.\n"
+            "🍲 O‘zbek taomlari, VIP ziyofatlar tashkil qilish mumkin.\n"
+            "📅 1, 2, 3 mahal bo‘yicha buyurtmalar olinadi.\n\n"
+            f"📲 Tafsilotlar: {MANAGER_ASSISTANT}",
             parse_mode="Markdown"
         )
 
     elif text == "✈️ Avia chiptalar":
         await update.message.reply_text(
-            f"""
-✈️ *Avia chiptalar bron qilish xizmati*
-
-🌍 Istalgan davlatga chipta bron qilish
-📆 Sana va yo‘nalish siz tanlaysiz
-📞 Vizasiz/Viza farqi yo‘q — har bir mijozga individual xizmat
-
-📲 Buyurtma uchun bog‘laning: {MANAGER_ASSISTANT}
-            """,
+            "✈️ *Avia chipta bron qilish xizmati*\n\n"
+            "🌍 Har qanday davlatga avia chipta buyurtma qilishingiz mumkin.\n"
+            "📅 Sana va yo‘nalishga mos takliflar.\n"
+            "💼 Vizali yoki vizasiz farqi yo‘q.\n\n"
+            f"📲 Buyurtma uchun: {MANAGER_ASSISTANT}",
             parse_mode="Markdown"
         )
 
     elif text == "📞 Admin bilan bog‘lanish":
         await update.message.reply_text(
-            f"""
-📞 *Adminlar bilan bog‘lanish*
-
-🕌 Ravza xizmatlari uchun: {MANAGER_RAVZA}
-📦 Boshqa xizmatlar uchun: {MANAGER_ASSISTANT}
-            """,
+            "📞 *Administratorlar bilan bog‘lanish*\n\n"
+            f"🕌 Ravza xizmatlari: {MANAGER_RAVZA}\n"
+            f"📦 Umra, transport, chipta va boshqa xizmatlar: {MANAGER_ASSISTANT}",
             parse_mode="Markdown"
         )
 
     else:
-        await update.message.reply_text("❗ Iltimos, menyudan biror xizmatni tanlang.")
-
-# Bot start
+        await update.message.reply_text("Iltimos, menyudan kerakli xizmatni tanlang.")
 
 def main():
     application = Application.builder().token("7667056220:AAEc8DwQ0WJrBfVk_yLN8wLWGpxUfRKT-5A").build()
-
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-
     application.run_polling()
 
 if __name__ == "__main__":
