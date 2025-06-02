@@ -1,15 +1,13 @@
 import os
-
-TOKEN = os.getenv("BOT_TOKEN")
-if not TOKEN:
-    raise ValueError("ERROR: BOT_TOKEN environment variable is not set!")
-
-# keyin telegram importlar va qolgan kod
+import asyncio
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, BotCommand
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from datetime import datetime, timedelta
 
-# ... qolgan kod
+# Tokenni olish
+TOKEN = os.getenv("BOT_TOKEN")
+if not TOKEN:
+    raise ValueError("ERROR: BOT_TOKEN environment variable is not set!")
 
 # Admin kontaktlari
 MANAGER_RAVZA = "@vip_arabiy"
@@ -229,19 +227,13 @@ async def set_menu_commands(application):
 
 # Botni ishga tushirish
 async def main():
-    import os
-
-TOKEN = os.getenv("BOT_TOKEN")
-
-if not TOKEN:
-    raise ValueError("ERROR: BOT_TOKEN environment variable is not set!")
-
     application = Application.builder().token(TOKEN).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     await set_menu_commands(application)
+
     await application.run_polling()
 
 if __name__ == "__main__":
