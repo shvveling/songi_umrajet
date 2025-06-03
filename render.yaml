@@ -1,6 +1,6 @@
 services:
-  - type: web
-    name: umrajet-telegram-bot
+  - type: worker
+    name: umrajet-bot
     env: python
     plan: free
     buildCommand: ""
