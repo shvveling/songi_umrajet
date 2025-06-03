@@ -3,17 +3,17 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, BotCommand
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
 from dotenv import load_dotenv
 
-# Tokenni yuklash
+# --- 1. TOKEN YUKLASH ---
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
-    raise ValueError("BOT_TOKEN topilmadi. .env faylni tekshiring.")
+    raise ValueError("❌ BOT_TOKEN topilmadi! Iltimos .env faylni tekshiring.")
 
-# Adminlar
+# --- 2. ADMIN MA'LUMOTLARI ---
 MANAGER_RAVZA = "@vip_arabiy"
 MANAGER_ASSISTANT = "@V001VB"
 
-# Start komandasi
+# --- 3. START KOMANDASI ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [KeyboardButton("🍇 Ravza tashrifi"), KeyboardButton("🕋 Umra paketlari")],
@@ -25,141 +25,139 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     await update.message.reply_text(
         "🤍 *UmraJet — Premium Umra xizmatlari markazi* 🤍\n\n"
-        "Quyidagi xizmatlardan birini tanlang:",
+        "Tanlang va buyurtma bering, biz siz uchun barcha ishni qilamiz!",
         parse_mode="Markdown",
         reply_markup=reply_markup
     )
 
-# Xizmatlar
-service_map = {
-    "🍇 Ravza tashrifi": "ravza_service",
-    "🕋 Umra paketlari": "umra_packages",
-    "🏨 Mehmonxona / Hostel": "hotels",
-    "🚄 Poezd chiptalari": "train_tickets",
-    "🚐 Transport xizmati": "transport",
-    "🍽 Guruh ovqatlari": "group_food",
-    "✈️ Avia chiptalar": "plane_tickets",
-    "📞 Admin bilan bog‘lanish": "contact_admin",
-    "📢 Rasmiy kanallar": "official_channels",
-}
+# --- 4. XIZMAT FUNKSIYALARI ---
+async def send_service_message(update: Update, text: str):
+    await update.message.reply_text(text, parse_mode="Markdown")
 
-# Xizmat funksiyalari
 async def ravza_service(update, context):
-    await update.message.reply_text(
+    text = (
         "🍇 *Ravza tashrifi — Ilohiy iltijo va ruhiy yangilanish!* ✨\n\n"
         "🔹 Viza bilan — 15 SAR\n"
         "🔹 Vizasiz — 20 SAR\n\n"
-        "📌 Shaxsiy va guruhli tashriflar\n"
-        "📄 Hujjat: rasm yoki PDF ko‘rinishida\n"
+        "📌 Guruhli va yakka tartibda tashrif\n"
+        "📄 Hujjat: rasm yoki PDF\n"
         "💳 To‘lov: Uzcard, Humo, Visa, Crypto\n\n"
-        f"📞 Bog‘lanish: {MANAGER_RAVZA} | {MANAGER_ASSISTANT}",
-        parse_mode="Markdown"
+        f"📞 Bog‘lanish: {MANAGER_RAVZA} | {MANAGER_ASSISTANT}"
     )
+    await send_service_message(update, text)
 
 async def umra_packages(update, context):
-    await update.message.reply_text(
+    text = (
         "🕋 *Umra paketlari — Orzu emas, haqiqat!* 🌙\n\n"
-        "✨ *Standard paket:* $1100 dan\n"
-        "✨ *VIP paket:* $2000 dan\n\n"
-        "✅ Viza rasmiylashtirish\n"
-        "✅ Mehmonxona\n"
-        "✅ Transport\n"
-        "✅ Gid xizmatlari\n"
-        "✅ Ovqat\n\n"
-        "💳 To‘lov: Uzcard, Humo, Visa, Crypto\n"
-        f"📞 Bog‘lanish: {MANAGER_ASSISTANT} | {MANAGER_RAVZA}",
-        parse_mode="Markdown"
+        "✨ *Standard paket:* $1100\n"
+        "✨ *VIP paket:* $2000\n\n"
+        "✅ Vizalar\n✅ Mehmonxona\n✅ Transport\n✅ Gid xizmati\n✅ Ovqat\n\n"
+        f"📞 Buyurtma: {MANAGER_ASSISTANT} | {MANAGER_RAVZA}"
     )
+    await send_service_message(update, text)
 
 async def hotels(update, context):
-    await update.message.reply_text(
-        "🏨 *Mehmonxona va Hostel bron qilish* 🛏\n\n"
+    text = (
+        "🏨 *Mehmonxona va Hostel xizmati* 🛏\n\n"
         "📍 Makka va Madina markazida\n"
-        "🕰 Har qanday muddatga\n"
-        "🍽 Ovqatli va ovqatsiz variantlar\n"
-        "🔐 Xavfsiz va ishonchli xizmat\n\n"
-        f"📞 Bog‘lanish: {MANAGER_ASSISTANT} | {MANAGER_RAVZA}",
-        parse_mode="Markdown"
+        "🍽 Ovqatli/ovqatsiz\n"
+        "🔐 Xavfsiz va qulay joylar\n\n"
+        f"📞 Bog‘lanish: {MANAGER_ASSISTANT} | {MANAGER_RAVZA}"
     )
+    await send_service_message(update, text)
 
 async def train_tickets(update, context):
-    await update.message.reply_text(
-        "🚄 *HHR Poezd chiptalari* 🚅\n\n"
-        "📍 Yo‘nalish: Makka ↔ Madina\n"
-        "🗓 Istalgan kunga buyurtma\n"
-        "💺 Joylar: Ekanom va Biznes\n\n"
-        f"📞 Bog‘lanish: {MANAGER_ASSISTANT} | {MANAGER_RAVZA}",
-        parse_mode="Markdown"
+    text = (
+        "🚄 *Poezd chiptalari — HHR liniyasi* 🚅\n\n"
+        "📍 Makka ↔ Madina\n"
+        "🗓 Sana: istalgan kun\n"
+        "💺 Joy: Ekanom yoki Biznes\n\n"
+        f"📞 Buyurtma: {MANAGER_ASSISTANT}"
     )
+    await send_service_message(update, text)
 
 async def transport(update, context):
-    await update.message.reply_text(
-        "🚐 *Transport xizmati — qulay va xavfsiz* 🚘\n\n"
-        "🚍 Avtobus, Toyota, VIP mashinalar\n"
-        "🕌 Masjidlarga, aeroportlarga yetkazish\n"
+    text = (
+        "🚐 *Transport xizmati — xavfsiz va qulay* 🚘\n\n"
+        "🚍 VIP avtomobillar, Toyota, avtobuslar\n"
+        "🕌 Masjidlar, aeroportlar uchun\n"
         "👨‍✈️ Tajribali haydovchilar\n\n"
-        f"📞 Bog‘lanish: {MANAGER_ASSISTANT} | {MANAGER_RAVZA}",
-        parse_mode="Markdown"
+        f"📞 Yozing: {MANAGER_ASSISTANT}"
     )
+    await send_service_message(update, text)
 
 async def group_food(update, context):
-    await update.message.reply_text(
-        "🍽 *Guruh ovqatlari (10+ kishilik)* 🍛\n\n"
-        "🥘 O‘zbekcha taomlar\n"
-        "🍱 1, 2 yoki 3 mahal menyular\n"
-        "🎉 Ziyofatlar uchun maxsus variantlar\n\n"
-        f"📞 Bog‘lanish: {MANAGER_ASSISTANT} | {MANAGER_RAVZA}",
-        parse_mode="Markdown"
+    text = (
+        "🍽 *Guruh ovqatlari — 10+ kishilik buyurtmalar* 🍛\n\n"
+        "🥘 O‘zbek taomlari\n"
+        "🍱 1, 2, 3 mahal menyular\n"
+        "🎉 Maxsus ziyofatlar uchun\n\n"
+        f"📞 Buyurtma uchun: {MANAGER_ASSISTANT}"
     )
+    await send_service_message(update, text)
 
 async def plane_tickets(update, context):
-    await update.message.reply_text(
-        "✈️ *Avia chiptalar — Istalgan yo‘nalish bo‘yicha* 🌍\n\n"
-        "📆 Sana va davlat tanlovi erkin\n"
-        "🛂 Vizali yoki vizasiz variantlar\n\n"
-        f"📞 Bog‘lanish: {MANAGER_ASSISTANT} | {MANAGER_RAVZA}",
-        parse_mode="Markdown"
+    text = (
+        "✈️ *Avia chiptalar — dunyo bo‘ylab* 🌍\n\n"
+        "📆 Istalgan sanaga\n"
+        "🛂 Vizali/vizasiz variantlar\n\n"
+        f"📞 So‘rov uchun: {MANAGER_ASSISTANT}"
     )
+    await send_service_message(update, text)
 
 async def contact_admin(update, context):
-    await update.message.reply_text(
+    text = (
         "📞 *Adminlar bilan bog‘lanish:*\n\n"
-        f"🍇 Ravza: {MANAGER_RAVZA}\n"
-        f"🕋 Umra & boshqa xizmatlar: {MANAGER_ASSISTANT}",
-        parse_mode="Markdown"
+        f"🍇 Ravza xizmatlari: {MANAGER_RAVZA}\n"
+        f"🕋 Umra va umumiy xizmatlar: {MANAGER_ASSISTANT}"
     )
+    await send_service_message(update, text)
 
 async def official_channels(update, context):
-    await update.message.reply_text(
-        "📢 *Rasmiy kanallar:*\n\n"
-        "🔗 @umrajet — Yangiliklar va e’lonlar\n"
-        "🔗 @the_ravza — Ravza tashrifi haqida\n\n"
-        f"📞 Savollar uchun: {MANAGER_RAVZA} | {MANAGER_ASSISTANT}",
-        parse_mode="Markdown"
+    text = (
+        "📢 *Rasmiy Telegram kanallar:*\n\n"
+        "🔗 @umrajet — e’lonlar va yangiliklar\n"
+        "🔗 @the_ravza — Ravza haqida ma’lumotlar\n\n"
+        f"📞 Savollar uchun: {MANAGER_RAVZA}"
     )
+    await send_service_message(update, text)
 
-# Xabarlar uchun handler
+# --- 5. XIZMATLAR XARITASI ---
+service_map = {
+    "🍇 Ravza tashrifi": ravza_service,
+    "🕋 Umra paketlari": umra_packages,
+    "🏨 Mehmonxona / Hostel": hotels,
+    "🚄 Poezd chiptalari": train_tickets,
+    "🚐 Transport xizmati": transport,
+    "🍽 Guruh ovqatlari": group_food,
+    "✈️ Avia chiptalar": plane_tickets,
+    "📞 Admin bilan bog‘lanish": contact_admin,
+    "📢 Rasmiy kanallar": official_channels,
+}
+
+# --- 6. FOYDALANUVCHI XABARINI QABUL QILISH ---
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.strip()
-    func_name = service_map.get(text)
-    if func_name:
-        await globals()[func_name](update, context)
+    func = service_map.get(text)
+    if func:
+        await func(update, context)
     else:
         await update.message.reply_text("Iltimos, menyudan xizmat tanlang.")
 
-# /start komandasi
-async def set_commands(application: Application):
-    await application.bot.set_my_commands([
+# --- 7. KOMANDALAR RO‘YXATI ---
+async def set_commands(app: Application):
+    await app.bot.set_my_commands([
         BotCommand("start", "🔁 Botni ishga tushirish")
     ])
 
-# Main
+# --- 8. BOTNI ISHGA TUSHURISH ---
 def main():
     application = Application.builder().token(TOKEN).post_init(set_commands).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
+    print("✅ Bot ishga tushdi!")
     application.run_polling()
 
 if __name__ == "__main__":
