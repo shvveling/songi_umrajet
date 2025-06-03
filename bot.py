@@ -194,20 +194,12 @@ async def set_menu_commands(application: Application):
         BotCommand("start", "🔄 Botni qayta ishga tushirish"),
     ])
 
-# --- Asosiy funksiya --- #
 def main():
-    application = Application.builder().token(TOKEN).build()
+    application = Application.builder().token(TOKEN).post_init(set_menu_commands).build()
 
     # Handlerlarni qo‘shish
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    # Bot komandalarini o‘rnatish (async)
-    import asyncio
-    asyncio.run(set_menu_commands(application))
-
     # Botni ishga tushirish
     application.run_polling()
-
-if __name__ == "__main__":
-    main()
