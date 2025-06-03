@@ -30,8 +30,21 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
+# Xizmatlar
+service_map = {
+    "🍇 Ravza tashrifi": "ravza_service",
+    "🕋 Umra paketlari": "umra_packages",
+    "🏨 Mehmonxona / Hostel": "hotels",
+    "🚄 Poezd chiptalari": "train_tickets",
+    "🚐 Transport xizmati": "transport",
+    "🍽 Guruh ovqatlari": "group_food",
+    "✈️ Avia chiptalar": "plane_tickets",
+    "📞 Admin bilan bog‘lanish": "contact_admin",
+    "📢 Rasmiy kanallar": "official_channels",
+}
+
 # Xizmat funksiyalari
-async def ravza_service(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def ravza_service(update, context):
     await update.message.reply_text(
         "🍇 *Ravza tashrifi — Ilohiy iltijo va ruhiy yangilanish!* ✨\n\n"
         "🔹 Viza bilan — 15 SAR\n"
@@ -43,7 +56,7 @@ async def ravza_service(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-async def umra_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def umra_packages(update, context):
     await update.message.reply_text(
         "🕋 *Umra paketlari — Orzu emas, haqiqat!* 🌙\n\n"
         "✨ *Standard paket:* $1100 dan\n"
@@ -58,7 +71,7 @@ async def umra_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-async def hotels(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def hotels(update, context):
     await update.message.reply_text(
         "🏨 *Mehmonxona va Hostel bron qilish* 🛏\n\n"
         "📍 Makka va Madina markazida\n"
@@ -69,7 +82,7 @@ async def hotels(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-async def train_tickets(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def train_tickets(update, context):
     await update.message.reply_text(
         "🚄 *HHR Poezd chiptalari* 🚅\n\n"
         "📍 Yo‘nalish: Makka ↔ Madina\n"
@@ -79,7 +92,7 @@ async def train_tickets(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-async def transport(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def transport(update, context):
     await update.message.reply_text(
         "🚐 *Transport xizmati — qulay va xavfsiz* 🚘\n\n"
         "🚍 Avtobus, Toyota, VIP mashinalar\n"
@@ -89,7 +102,7 @@ async def transport(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-async def group_food(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def group_food(update, context):
     await update.message.reply_text(
         "🍽 *Guruh ovqatlari (10+ kishilik)* 🍛\n\n"
         "🥘 O‘zbekcha taomlar\n"
@@ -99,7 +112,7 @@ async def group_food(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-async def plane_tickets(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def plane_tickets(update, context):
     await update.message.reply_text(
         "✈️ *Avia chiptalar — Istalgan yo‘nalish bo‘yicha* 🌍\n\n"
         "📆 Sana va davlat tanlovi erkin\n"
@@ -108,7 +121,7 @@ async def plane_tickets(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-async def contact_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def contact_admin(update, context):
     await update.message.reply_text(
         "📞 *Adminlar bilan bog‘lanish:*\n\n"
         f"🍇 Ravza: {MANAGER_RAVZA}\n"
@@ -116,7 +129,7 @@ async def contact_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-async def official_channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def official_channels(update, context):
     await update.message.reply_text(
         "📢 *Rasmiy kanallar:*\n\n"
         "🔗 @umrajet — Yangiliklar va e’lonlar\n"
@@ -125,31 +138,16 @@ async def official_channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-# Message handler
+# Xabarlar uchun handler
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
-    if text == "🍇 Ravza tashrifi":
-        await ravza_service(update, context)
-    elif text == "🕋 Umra paketlari":
-        await umra_packages(update, context)
-    elif text == "🏨 Mehmonxona / Hostel":
-        await hotels(update, context)
-    elif text == "🚄 Poezd chiptalari":
-        await train_tickets(update, context)
-    elif text == "🚐 Transport xizmati":
-        await transport(update, context)
-    elif text == "🍽 Guruh ovqatlari":
-        await group_food(update, context)
-    elif text == "✈️ Avia chiptalar":
-        await plane_tickets(update, context)
-    elif text == "📞 Admin bilan bog‘lanish":
-        await contact_admin(update, context)
-    elif text == "📢 Rasmiy kanallar":
-        await official_channels(update, context)
+    text = update.message.text.strip()
+    func_name = service_map.get(text)
+    if func_name:
+        await globals()[func_name](update, context)
     else:
         await update.message.reply_text("Iltimos, menyudan xizmat tanlang.")
 
-# Menu komandasi
+# /start komandasi
 async def set_commands(application: Application):
     await application.bot.set_my_commands([
         BotCommand("start", "🔁 Botni ishga tushirish")
