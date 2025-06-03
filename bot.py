@@ -4,25 +4,21 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, BotCommand
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from dotenv import load_dotenv
 
-# --- Muhit o'zgaruvchilarini yuklash ---
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
     raise ValueError("BOT_TOKEN topilmadi! .env faylni tekshiring.")
 
-# --- Admin kontaklar ---
 MANAGER_RAVZA = "@vip_arabiy"
 MANAGER_ASSISTANT = "@V001VB"
 CHANNEL_UMRAJET = "@umrajet"
 CHANNEL_RAVZA = "@the_ravza"
 
-# --- Aksiya muddati boshlanish sanasi ---
 BOT_START_DATE = datetime(2025, 6, 2)
 
 def is_discount_active() -> bool:
     return datetime.now() < BOT_START_DATE + timedelta(days=7)
 
-# --- Start komandasi ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [KeyboardButton("🍇 Ravzaga tashrif"), KeyboardButton("🕋 Umra paketlari")],
@@ -31,8 +27,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [KeyboardButton("✈️ Avia chiptalar"), KeyboardButton("📞 Admin bilan bog‘lanish")],
         [KeyboardButton("📢 Rasmiy kanallar"), KeyboardButton("💬 Yordamchi AI")]
     ]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=False)
-
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     await update.message.reply_text(
         "🤍 *UmraJet — Premium Umra xizmatlari markazi* 🤍\n\n"
         "Assalomu alaykum!\n"
@@ -41,12 +36,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
-# --- Har bir xizmat uchun alohida funksiya --- #
-async def ravza_service(update: Update):
+async def ravza_service(update: Update, context: ContextTypes.DEFAULT_TYPE):
     discount_active = is_discount_active()
     price_viza = "10 SAR (aksiyada!)" if discount_active else "15 SAR"
     price_no_viza = "15 SAR (aksiyada!)" if discount_active else "20 SAR"
-
     await update.message.reply_text(
         f"🍇 *Ravzaga tashrif xizmati* — Ruhiy yangilanish manbai\n\n"
         f"🔹 *Viza bilan:* {price_viza}\n"
@@ -59,7 +52,7 @@ async def ravza_service(update: Update):
         parse_mode="Markdown"
     )
 
-async def umra_packages(update: Update):
+async def umra_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🕋 *Umra paketlari — Armon emas, imkon!* 🌙\n\n"
         "✨ *Standard:* 1100$ dan\n"
@@ -75,7 +68,7 @@ async def umra_packages(update: Update):
         parse_mode="Markdown"
     )
 
-async def hotels(update: Update):
+async def hotels(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🏨 *Mehmonxona va Hostel bron qilish* 🛏\n\n"
         "📍 Makka va Madina markazlarida joylashgan\n"
@@ -86,7 +79,7 @@ async def hotels(update: Update):
         parse_mode="Markdown"
     )
 
-async def train_tickets(update: Update):
+async def train_tickets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🚄 *HHR Poezd chiptalari* 🚅\n\n"
         "📍 Yo‘nalishlar: Makka, Madina va boshqa shaharlar\n"
@@ -97,7 +90,7 @@ async def train_tickets(update: Update):
         parse_mode="Markdown"
     )
 
-async def transport_service(update: Update):
+async def transport_service(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🚐 *Shaxsiy va guruh transporti* 🚖\n\n"
         "🚍 Avtobus, Toyota, VIP mashinalar\n"
@@ -107,7 +100,7 @@ async def transport_service(update: Update):
         parse_mode="Markdown"
     )
 
-async def group_food(update: Update):
+async def group_food(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🍽 *10+ kishilik guruh ovqatlari* 🍛\n\n"
         "🥘 O‘zbekcha taomlar\n"
@@ -117,7 +110,7 @@ async def group_food(update: Update):
         parse_mode="Markdown"
     )
 
-async def plane_tickets(update: Update):
+async def plane_tickets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "✈️ *Avia chiptalar — Istalgan manzilga* 🌍\n\n"
         "📆 Istalgan sana, istalgan davlat\n"
@@ -126,7 +119,7 @@ async def plane_tickets(update: Update):
         parse_mode="Markdown"
     )
 
-async def admin_contacts(update: Update):
+async def admin_contacts(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "📞 *Adminlar bilan to‘g‘ridan-to‘g‘ri bog‘laning:*\n\n"
         f"🍇 Ravza xizmatlari: {MANAGER_RAVZA}\n"
@@ -134,7 +127,7 @@ async def admin_contacts(update: Update):
         parse_mode="Markdown"
     )
 
-async def official_channels(update: Update):
+async def official_channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "📢 *Rasmiy axborot manbalarimiz:*\n\n"
         f"✅ UmraJet yangiliklari: {CHANNEL_UMRAJET}\n"
@@ -142,15 +135,14 @@ async def official_channels(update: Update):
         parse_mode="Markdown"
     )
 
-async def ai_helper_intro(update: Update):
+async def ai_helper_intro(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🧠 *AI yordamchi* faollashtirildi. Endi oddiy savollarni yozing, va javob olasiz.\n"
         "(Masalan: \"Umra necha kun davom etadi?\" yoki \"Vizasiz Ravzaga bora olamanmi?\")",
         parse_mode="Markdown"
     )
 
-# --- AI yordamchi (oddiy, to‘liq emas) --- #
-async def ai_helper(update: Update, text: str):
+async def ai_helper(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str):
     lower = text.lower()
     if "ravza" in lower:
         await update.message.reply_text("✅ Ha, vizasiz ham Ravzaga olib kiramiz.")
@@ -161,34 +153,31 @@ async def ai_helper(update: Update, text: str):
     else:
         await update.message.reply_text("🤖 Savolingizni tushunmadim. Iltimos, aniqroq yozing yoki menyudan xizmat tanlang.")
 
-# --- Xabarlarni qayta ishlovchi funksiya --- #
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     if text == "🍇 Ravzaga tashrif":
-        await ravza_service(update)
+        await ravza_service(update, context)
     elif text == "🕋 Umra paketlari":
-        await umra_packages(update)
+        await umra_packages(update, context)
     elif text == "🏨 Mehmonxona/Hostel":
-        await hotels(update)
+        await hotels(update, context)
     elif text == "🚄 Poezd chiptalari":
-        await train_tickets(update)
+        await train_tickets(update, context)
     elif text == "🚐 Transport xizmati":
-        await transport_service(update)
+        await transport_service(update, context)
     elif text == "🍽 Guruh ovqatlari":
-        await group_food(update)
+        await group_food(update, context)
     elif text == "✈️ Avia chiptalar":
-        await plane_tickets(update)
+        await plane_tickets(update, context)
     elif text == "📞 Admin bilan bog‘lanish":
-        await admin_contacts(update)
+        await admin_contacts(update, context)
     elif text == "📢 Rasmiy kanallar":
-        await official_channels(update)
+        await official_channels(update, context)
     elif text == "💬 Yordamchi AI":
-        await ai_helper_intro(update)
+        await ai_helper_intro(update, context)
     else:
-        # AI yordamchi oddiy savollarga javob beradi
-        await ai_helper(update, text)
+        await ai_helper(update, context, text)
 
-# --- Bot komandalarini sozlash ---
 async def set_menu_commands(application: Application):
     await application.bot.set_my_commands([
         BotCommand("start", "🔄 Botni qayta ishga tushirish"),
@@ -196,10 +185,9 @@ async def set_menu_commands(application: Application):
 
 def main():
     application = Application.builder().token(TOKEN).post_init(set_menu_commands).build()
-
-    # Handlerlarni qo‘shish
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-
-    # Botni ishga tushirish
     application.run_polling()
+
+if __name__ == "__main__":
+    main()
