@@ -1,26 +1,25 @@
-import asyncio
-from aiogram import Bot, Dispatcher, types
-from aiogram.enums import ParseMode
-from aiogram.types import Message
-from dotenv import load_dotenv
-import os
+from aiogram import Bot, Dispatcher, types, executor
+from config import BOT_TOKEN
+from services import start_menu, service_handlers
+from handlers import register_handlers
 
-load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN")
+bot = Bot(token=BOT_TOKEN, parse_mode="HTML")
+dp = Dispatcher(bot)
 
-bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)
-dp = Dispatcher()
-
-@dp.message()
-async def start_handler(message: Message):
-    await message.answer(
-        "<b>Assalomu alaykum!</b>\n\n"
-        "Bu <b>UmraJet</b> xizmatlari botidir. Xizmatlarimizdan foydalanish uchun menyudan tanlang.\n\n"
-        "📲 @vip_arabiy\n📲 @V001VB\n🔗 Bot: @umrajet_bot\n📣 Kanal: @umrajet, @the_ravza"
+# Boshlanish
+@dp.message_handler(commands=['start'])
+async def start_handler(message: types.Message):
+    text = (
+        "🕋 <b>Assalomu alaykum!</b>\n\n"
+        "Bu <b>UmraJet</b> xizmatlari botidir.\n"
+        "Quyidagi xizmatlardan birini tanlang 👇"
     )
+    await message.answer(text, reply_markup=start_menu())
 
-async def main():
-    await dp.start_polling(bot)
+# Register xizmatlar va callbacklar
+service_handlers(dp, bot)
+register_handlers(dp, bot)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    from aiogram import executor
+    executor.start_polling(dp, skip_updates=True)
