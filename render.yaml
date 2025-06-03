@@ -2,9 +2,5 @@ services:
   - type: worker
     name: umrajet-bot
     env: python
-    plan: free
-    buildCommand: ""
-    startCommand: "python bot.py"
-    envVars:
-      - key: BOT_TOKEN
-        sync: false
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
