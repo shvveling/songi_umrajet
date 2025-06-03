@@ -1,42 +1,31 @@
-import asyncio
 import logging
-import os
-
 from aiogram import Bot, Dispatcher
-from aiogram.enums import ParseMode
+from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import BotCommand
 
+from handlers import user
+
+import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
-from admin import register_admin_handlers
-from handlers.user import register_user_handlers
+API_TOKEN = os.getenv("BOT_TOKEN")
 
-TOKEN = os.getenv("BOT_TOKEN")
-if not TOKEN:
-    raise ValueError("BOT_TOKEN .env faylda topilmadi!")
+logging.basicConfig(level=logging.INFO)
 
-bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)
-dp = Dispatcher(storage=MemoryStorage())
+bot = Bot(token=API_TOKEN)
+storage = MemoryStorage()
+dp = Dispatcher(storage=storage)
 
-async def set_commands():
-    commands = [
-        BotCommand(command="start", description="✨ Botni ishga tushirish"),
-        BotCommand(command="admin", description="🔒 Admin panel"),
-    ]
-    await bot.set_my_commands(commands)
+# Routers
+dp.include_router(user.user_router)
 
-async def main():
-    logging.basicConfig(level=logging.INFO)
-    print("✅ UmraJetBot ishga tushdi!")
-
-    await set_commands()
-
-    register_admin_handlers(dp)
-    register_user_handlers(dp)
-
-    await dp.start_polling(bot)
+# Start command handler
+@dp.message(Command("start"))
+async def send_welcome(message):
+    await message.answer("Xush kelibsiz! /start buyrug‘ini qayta bosing.")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    import asyncio
+    asyncio.run(dp.start_polling(bot))
