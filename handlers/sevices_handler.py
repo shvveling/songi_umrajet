@@ -1,73 +1,106 @@
-from aiogram import types, Dispatcher
+from aiogram import types
+from aiogram.dispatcher import Dispatcher
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-# HHR train poezd yo'nalishlari va ma'lumotlari
-HHR_TRAIN_INFO = """
-🚆 *HHR Train Yo‘nalishlari va Narxlari*:
+# --- Xizmat tugmalari ---
+def get_services_keyboard():
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    keyboard.add(
+        InlineKeyboardButton("🧳 Umra paketlari", callback_data="umra_packages"),
+        InlineKeyboardButton("🛂 Umra vizasi ($160)", callback_data="umra_visa"),
+        InlineKeyboardButton("🧾 Turist vizasi ($120)", callback_data="tourist_visa"),
+        InlineKeyboardButton("🏨 Mehmonxona & Hostel", callback_data="hotel_booking"),
+        InlineKeyboardButton("🚌 Transfer xizmatlari", callback_data="transfer_service"),
+        InlineKeyboardButton("📄 Tasreh (Rawdah ruxsatnomasi)", callback_data="tasreh"),
+        InlineKeyboardButton("🚅 Poezd chiptalari (HHR)", callback_data="train_tickets"),
+        InlineKeyboardButton("🍽 Guruh ovqatlanish", callback_data="group_meals"),
+    )
+    return keyboard
 
-1. Riyadh — Makkah
-2. Riyadh — Madina
-3. Makkah — Madina
-4. Jeddah — Madina
-5. Dammam — Makkah
+# --- Xizmatlar haqida malumotlar ---
+async def handle_services(callback_query: types.CallbackQuery):
+    data = callback_query.data
 
-🕒 Har bir yo'nalish uchun qatnov vaqtlari va chipta narxlari doimiy ravishda o‘zgarib turadi.
-Sizga aniq ma’lumotni sotuvchilarimiz taqdim etadi.
+    if data == "umra_packages":
+        msg = (
+            "🧳 <b>Umra paketlari</b>\n"
+            "• Oddiy Umra: <b>1100$</b> dan boshlanadi\n"
+            "• VIP Umra: <b>2000$</b> dan\n\n"
+            "📦 Paket ichida: vizalar, mehmonxona, transfer, tasreh, ovqatlanish va boshqalar\n"
+            "To‘liq ma'lumot uchun menejerga yozing: @vip_arabiy yoki @V001VB"
+        )
 
-📌 Chipta xarid qilishda viza holatini, yo‘nalishni va sana tanlashni unutmang.
-"""
+    elif data == "umra_visa":
+        msg = (
+            "🛂 <b>Umra vizasi</b>\n"
+            "Narxi: <b>160$</b>\n"
+            "Vaqti: 2-5 ish kuni\n"
+            "Kafolat: 100%\n"
+            "Murojaat uchun: @vip_arabiy yoki @V001VB"
+        )
 
-async def service_handler(message: types.Message):
-    text = ""
-    if message.text == "🛂 Viza xizmati":
-        text = (
-            "🌍 *Viza xizmatlari*\n\n"
-            "Turist va Umra vizalarini rasmiy ravishda taqdim etamiz.\n\n"
-            "💰 Narxlar:\n"
-            "• Turist vizasi: 120 USD / dona\n"
-            "• Umra vizasi: 160 USD / dona\n\n"
-            "Viza olish jarayoni tez va ishonchli, hujjatlar bilan yordam beramiz."
+    elif data == "tourist_visa":
+        msg = (
+            "🧾 <b>Turistik vizalar</b>\n"
+            "Narxi: <b>120$</b>\n"
+            "Amal qilish muddati: 1 yilgacha\n"
+            "Shaxsiy va ishbilarmonlik maqsadlar uchun\n"
+            "Murojaat uchun: @vip_arabiy yoki @V001VB"
         )
-    elif message.text == "🕌 Ravza tasreh xizmati":
-        text = (
-            "🕋 *Ravza tasreh xizmati*\n\n"
-            "Ravzaga kirish uchun tasreh xizmatlari 24/7:\n"
-            "- Agar sizda oldin ro‘yxatdan o‘tmagan va ruhsatnoma (viza) bo‘lsa, narx: 15 SAR / dona\n"
-            "- Agar viza berilmasa, narx: 20 SAR / dona\n\n"
-            "Guruhlarga 10+ tasrehlarga chegirma mavjud, narxlar alohida kelishiladi.\n\n"
-            "Eslatma: Tasreh uchun viza berilsa narx arzonroq bo'ladi oldin ro'yhatdan o'tmagan bo'lishi sharti bilan."
+
+    elif data == "hotel_booking":
+        msg = (
+            "🏨 <b>Mehmonxona & Hostel bron qilish</b>\n"
+            "• Makkada va Madinada qulay joylashuv\n"
+            "• Guruh yoki yakka mijozlar uchun\n"
+            "• Narxlar bozor holatiga qarab belgilanadi\n"
+            "📝 Batafsil: @vip_arabiy yoki @V001VB"
         )
-    elif message.text == "🏨 Mehmonxona":
-        text = (
-            "🏨 *Mehmonxona va Hostel*\n\n"
-            "Qulay va arzon narxlarda mehmonxona va hostel xizmatlarini taqdim etamiz.\n"
-            "Joylashuv: Makkah va Madinada markaziy hududlarda.\n\n"
-            "Narxlar va mavjudlik haqida batafsil ma'lumotni menejerlarimizdan so‘rashingiz mumkin."
+
+    elif data == "transfer_service":
+        msg = (
+            "🚌 <b>Transfer xizmatlari</b>\n"
+            "• Aeroport ↔ Mehmonxona\n"
+            "• Makkah ↔ Madinah\n"
+            "• Shaxsiy yoki umumiy\n"
+            "🚗 Yangi va qulay transport\n"
+            "📌 @vip_arabiy yoki @V001VB orqali buyurtma bering"
         )
-    elif message.text == "🚆 Po'ezd biletlar":
-        text = HHR_TRAIN_INFO
-    elif message.text == "🚗 Transport":
-        text = (
-            "🚗 *Transport xizmati*\n\n"
-            "Airport transfer, shahardagi sayohatlar va guruh transportlari uchun xizmatlar.\n"
-            "Yuqori sifatli va qulay transportlar taqdim etiladi."
+
+    elif data == "tasreh":
+        msg = (
+            "📄 <b>Tasreh - Rawdah ruxsatnomasi</b>\n"
+            "• Agar <b>oldin ro‘yxatdan o‘tilmagan</b> va viza berilgan bo‘lsa: <b>15 SAR</b>\n"
+            "• Agar viza yo‘q yoki oldin ruxsatnoma olingan bo‘lsa: <b>20 SAR</b>\n"
+            "• Guruh bo‘yicha chegirmalar mavjud\n"
+            "💬 Batafsil: @vip_arabiy yoki @V001VB"
         )
-    elif message.text == "🍽️ Guruhlar uchun ovqat":
-        text = (
-            "🍽️ *Guruhlar uchun ovqat xizmati*\n\n"
-            "Katta guruhlar uchun maxsus taom va menyular.\n"
-            "Sifatli va mazali taomlarni taqdim etamiz."
+
+    elif data == "train_tickets":
+        msg = (
+            "🚅 <b>Poezd chiptalari (HHR Train)</b>\n"
+            "Yo‘nalishlar: Makkah, Madinah, KAIA, KAEC va boshqa stansiyalar\n"
+            "Narx va jadval: mavjud holatga qarab\n"
+            "📤 Buyurtma: @vip_arabiy yoki @V001VB"
         )
+
+    elif data == "group_meals":
+        msg = (
+            "🍽 <b>Guruh ovqatlanish xizmati</b>\n"
+            "• Nonushta, tushlik, kechki ovqat\n"
+            "• Halol, sifatli va pokiza\n"
+            "• Menyular moslashtiriladi\n"
+            "🥘 Buyurtma: @vip_arabiy yoki @V001VB"
+        )
+
     else:
-        text = "Iltimos, menyudan xizmatni tanlang."
-        
-    await message.answer(text, parse_mode="Markdown")
+        msg = "Xizmat topilmadi. Iltimos, boshqatdan urinib ko‘ring."
 
-def register_handlers(dp: Dispatcher):
-    dp.register_message_handler(service_handler, lambda m: m.text in [
-        "🛂 Viza xizmati",
-        "🕌 Ravza tasreh xizmati",
-        "🏨 Mehmonxona",
-        "🚆 Po'ezd biletlar",
-        "🚗 Transport",
-        "🍽️ Guruhlar uchun ovqat",
+    await callback_query.message.edit_text(msg, parse_mode="HTML")
+
+
+def register_services(dp: Dispatcher):
+    dp.register_callback_query_handler(handle_services, lambda c: c.data in [
+        "umra_packages", "umra_visa", "tourist_visa", "hotel_booking",
+        "transfer_service", "tasreh", "train_tickets", "group_meals"
     ])
