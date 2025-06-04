@@ -1,106 +1,116 @@
-from aiogram import types
-from aiogram.dispatcher import Dispatcher
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram import types, Dispatcher
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from loader import dp
 
-# --- Xizmat tugmalari ---
-def get_services_keyboard():
-    keyboard = InlineKeyboardMarkup(row_width=2)
-    keyboard.add(
-        InlineKeyboardButton("🧳 Umra paketlari", callback_data="umra_packages"),
-        InlineKeyboardButton("🛂 Umra vizasi ($160)", callback_data="umra_visa"),
-        InlineKeyboardButton("🧾 Turist vizasi ($120)", callback_data="tourist_visa"),
-        InlineKeyboardButton("🏨 Mehmonxona & Hostel", callback_data="hotel_booking"),
-        InlineKeyboardButton("🚌 Transfer xizmatlari", callback_data="transfer_service"),
-        InlineKeyboardButton("📄 Tasreh (Rawdah ruxsatnomasi)", callback_data="tasreh"),
-        InlineKeyboardButton("🚅 Poezd chiptalari (HHR)", callback_data="train_tickets"),
-        InlineKeyboardButton("🍽 Guruh ovqatlanish", callback_data="group_meals"),
+# Xizmatlar tugmalari
+services_menu = InlineKeyboardMarkup(row_width=2).add(
+    InlineKeyboardButton("🎫 Umra va Turist Vizalari", callback_data="visa"),
+    InlineKeyboardButton("🏨 Mehmonxona va Hostel", callback_data="hotel"),
+    InlineKeyboardButton("🚌 Transport Xizmatlari", callback_data="transport"),
+    InlineKeyboardButton("🕌 Rawdah Tashrif (Tasreh)", callback_data="tasreh"),
+    InlineKeyboardButton("🚄 Poezd Chiptalari", callback_data="train"),
+    InlineKeyboardButton("🍽️ Guruh Ovqatlanishi", callback_data="meals"),
+    InlineKeyboardButton("🎁 Umra Paketlari", callback_data="packages"),
+)
+
+@dp.message_handler(text="📋 Xizmatlar")
+async def show_services(msg: types.Message):
+    await msg.answer(
+        "<b>📋 Bizning Umra xizmatlarimiz:</b>\n\n"
+        "Xizmat turini tanlang. Har bir xizmat bo’yicha to’liq ma’lumot beriladi.\n"
+        "Xizmatni tanlaganingizdan so’ng, buyurtmani bot orqali to’g’ridan-to’g’ri managerga yuborishingiz mumkin ✅",
+        reply_markup=services_menu
     )
-    return keyboard
 
-# --- Xizmatlar haqida malumotlar ---
-async def handle_services(callback_query: types.CallbackQuery):
-    data = callback_query.data
+# Visa
+@dp.callback_query_handler(lambda c: c.data == "visa")
+async def visa_info(call: types.CallbackQuery):
+    await call.message.answer(
+        "<b>🎫 Umra va Turist Vizalari</b>\n\n"
+        "📌 Turist vizasi – <b>120$</b>\n"
+        "📌 Umra vizasi – <b>160$</b>\n\n"
+        "🕐 Viza tayyorlash muddati: 1-3 ish kuni\n"
+        "✅ Pasport nusxasi kifoya\n"
+        "☎️ Managerlarimiz sizga tez orada aloqaga chiqadi."
+    )
+    await call.answer()
 
-    if data == "umra_packages":
-        msg = (
-            "🧳 <b>Umra paketlari</b>\n"
-            "• Oddiy Umra: <b>1100$</b> dan boshlanadi\n"
-            "• VIP Umra: <b>2000$</b> dan\n\n"
-            "📦 Paket ichida: vizalar, mehmonxona, transfer, tasreh, ovqatlanish va boshqalar\n"
-            "To‘liq ma'lumot uchun menejerga yozing: @vip_arabiy yoki @V001VB"
-        )
+# Hotel
+@dp.callback_query_handler(lambda c: c.data == "hotel")
+async def hotel_info(call: types.CallbackQuery):
+    await call.message.answer(
+        "<b>🏨 Mehmonxona va Hostel band qilish</b>\n\n"
+        "📍 Makkada, Madinada va boshqa shaharlar bo’yicha arzon narxlarda.\n"
+        "⭐ 3-4-5 yulduzli mehmonxonalar\n"
+        "💤 Hostel variantlari ham mavjud\n"
+        "🗓️ Sanalarni ayting, biz takliflar bilan chiqamiz!"
+    )
+    await call.answer()
 
-    elif data == "umra_visa":
-        msg = (
-            "🛂 <b>Umra vizasi</b>\n"
-            "Narxi: <b>160$</b>\n"
-            "Vaqti: 2-5 ish kuni\n"
-            "Kafolat: 100%\n"
-            "Murojaat uchun: @vip_arabiy yoki @V001VB"
-        )
+# Transport
+@dp.callback_query_handler(lambda c: c.data == "transport")
+async def transport_info(call: types.CallbackQuery):
+    await call.message.answer(
+        "<b>🚌 Transport xizmatlari</b>\n\n"
+        "🚐 Airport pickup/drop (Jidda, Madina)\n"
+        "🛻 Shaharlararo safarlar (Makka ↔ Madina)\n"
+        "👥 Guruh va individual transport mavjud\n"
+        "🔁 Kunlik/soatlik ijaralar ham bor"
+    )
+    await call.answer()
 
-    elif data == "tourist_visa":
-        msg = (
-            "🧾 <b>Turistik vizalar</b>\n"
-            "Narxi: <b>120$</b>\n"
-            "Amal qilish muddati: 1 yilgacha\n"
-            "Shaxsiy va ishbilarmonlik maqsadlar uchun\n"
-            "Murojaat uchun: @vip_arabiy yoki @V001VB"
-        )
+# Tasreh (Rawdah)
+@dp.callback_query_handler(lambda c: c.data == "tasreh")
+async def tasreh_info(call: types.CallbackQuery):
+    await call.message.answer(
+        "<b>🕌 Rawdah tashrifi (Tasreh)</b>\n\n"
+        "⛔️ Dastlabki vizangiz orqali Rawdah tashrifi qilinmagan bo‘lishi kerak.\n\n"
+        "✅ Viza mavjud bo‘lsa – <b>15 SAR</b>\n"
+        "⛔️ Vizasiz bo‘lsa – <b>20 SAR</b>\n\n"
+        "📍 Guruhlar uchun chegirmalar mavjud.\n"
+        "📆 Sana va ismlarni yuboring – joy band qilamiz."
+    )
+    await call.answer()
 
-    elif data == "hotel_booking":
-        msg = (
-            "🏨 <b>Mehmonxona & Hostel bron qilish</b>\n"
-            "• Makkada va Madinada qulay joylashuv\n"
-            "• Guruh yoki yakka mijozlar uchun\n"
-            "• Narxlar bozor holatiga qarab belgilanadi\n"
-            "📝 Batafsil: @vip_arabiy yoki @V001VB"
-        )
+# Train
+@dp.callback_query_handler(lambda c: c.data == "train")
+async def train_info(call: types.CallbackQuery):
+    await call.message.answer(
+        "<b>🚄 HHR Poezd chiptalari</b>\n\n"
+        "📌 Yo‘nalishlar:\n"
+        "— Makka ↔ Madina\n"
+        "— Makka ↔ Jidda Airport\n"
+        "— Madina ↔ Jidda Airport\n\n"
+        "💺 Comfort va Business class\n"
+        "🗓️ Sana va yo‘nalishni yuboring — tezkor band qilish!"
+    )
+    await call.answer()
 
-    elif data == "transfer_service":
-        msg = (
-            "🚌 <b>Transfer xizmatlari</b>\n"
-            "• Aeroport ↔ Mehmonxona\n"
-            "• Makkah ↔ Madinah\n"
-            "• Shaxsiy yoki umumiy\n"
-            "🚗 Yangi va qulay transport\n"
-            "📌 @vip_arabiy yoki @V001VB orqali buyurtma bering"
-        )
+# Meals
+@dp.callback_query_handler(lambda c: c.data == "meals")
+async def meals_info(call: types.CallbackQuery):
+    await call.message.answer(
+        "<b>🍽️ Guruh ovqatlanishi</b>\n\n"
+        "👨‍👩‍👧‍👦 Guruh va oilaviy ovqatlar\n"
+        "🍛 Nonushta, tushlik, kechki ovqat variantlari\n"
+        "📦 Yetkazib beriladi (delivery)\n"
+        "📅 Sana va kishi sonini ayting – narxlarni taklif qilamiz"
+    )
+    await call.answer()
 
-    elif data == "tasreh":
-        msg = (
-            "📄 <b>Tasreh - Rawdah ruxsatnomasi</b>\n"
-            "• Agar <b>oldin ro‘yxatdan o‘tilmagan</b> va viza berilgan bo‘lsa: <b>15 SAR</b>\n"
-            "• Agar viza yo‘q yoki oldin ruxsatnoma olingan bo‘lsa: <b>20 SAR</b>\n"
-            "• Guruh bo‘yicha chegirmalar mavjud\n"
-            "💬 Batafsil: @vip_arabiy yoki @V001VB"
-        )
-
-    elif data == "train_tickets":
-        msg = (
-            "🚅 <b>Poezd chiptalari (HHR Train)</b>\n"
-            "Yo‘nalishlar: Makkah, Madinah, KAIA, KAEC va boshqa stansiyalar\n"
-            "Narx va jadval: mavjud holatga qarab\n"
-            "📤 Buyurtma: @vip_arabiy yoki @V001VB"
-        )
-
-    elif data == "group_meals":
-        msg = (
-            "🍽 <b>Guruh ovqatlanish xizmati</b>\n"
-            "• Nonushta, tushlik, kechki ovqat\n"
-            "• Halol, sifatli va pokiza\n"
-            "• Menyular moslashtiriladi\n"
-            "🥘 Buyurtma: @vip_arabiy yoki @V001VB"
-        )
-
-    else:
-        msg = "Xizmat topilmadi. Iltimos, boshqatdan urinib ko‘ring."
-
-    await callback_query.message.edit_text(msg, parse_mode="HTML")
+# Packages
+@dp.callback_query_handler(lambda c: c.data == "packages")
+async def packages_info(call: types.CallbackQuery):
+    await call.message.answer(
+        "<b>🎁 Umra Paketlari</b>\n\n"
+        "🔹 <b>Standard:</b> $1100 dan\n"
+        "🔸 <b>VIP:</b> $2000 dan\n\n"
+        "✅ Viza, mehmonxona, transport, tashriflar, ovqatlar hammasi ichida.\n"
+        "👤 Yakka yoki guruh uchun\n"
+        "📆 Sana va kishilar sonini yuboring – to‘liq paket jo‘natamiz"
+    )
+    await call.answer()
 
 
-def register_services(dp: Dispatcher):
-    dp.register_callback_query_handler(handle_services, lambda c: c.data in [
-        "umra_packages", "umra_visa", "tourist_visa", "hotel_booking",
-        "transfer_service", "tasreh", "train_tickets", "group_meals"
-    ])
+def register_services_handlers(dp: Dispatcher):
+    dp.register_message_handler(show_services, text="📋 Xizmatlar")
