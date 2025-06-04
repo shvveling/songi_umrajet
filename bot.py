@@ -1,25 +1,29 @@
-from aiogram import Bot, Dispatcher, types, executor
-from config import BOT_TOKEN
-from services import start_menu, service_handlers
-from handlers import register_handlers
+import logging
+from aiogram import Bot, Dispatcher, executor, types
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from dotenv import load_dotenv
+import os
 
-bot = Bot(token=BOT_TOKEN, parse_mode="HTML")
-dp = Dispatcher(bot)
+# .env fayldan o'zgaruvchilarni yuklash
+load_dotenv()
 
-# Boshlanish
-@dp.message_handler(commands=['start'])
-async def start_handler(message: types.Message):
-    text = (
-        "🕋 <b>Assalomu alaykum!</b>\n\n"
-        "Bu <b>UmraJet</b> xizmatlari botidir.\n"
-        "Quyidagi xizmatlardan birini tanlang 👇"
-    )
-    await message.answer(text, reply_markup=start_menu())
+API_TOKEN = os.getenv("BOT_TOKEN")
+GROUP_ID = int(os.getenv("GROUP_ID"))
 
-# Register xizmatlar va callbacklar
-service_handlers(dp, bot)
-register_handlers(dp, bot)
+logging.basicConfig(level=logging.INFO)
+
+bot = Bot(token=API_TOKEN)
+storage = MemoryStorage()
+dp = Dispatcher(bot, storage=storage)
+
+# Handlerlarni import qilish
+from handlers import start_handler, services_handler, payment_handler, admin_handler
+
+# Handlerlarni ro'yxatdan o'tkazish
+start_handler.register_handlers(dp)
+services_handler.register_handlers(dp)
+payment_handler.register_handlers(dp)
+admin_handler.register_handlers(dp)
 
 if __name__ == "__main__":
-    from aiogram import executor
     executor.start_polling(dp, skip_updates=True)
